@@ -44,7 +44,7 @@ const fetchMyIP = function(callback) {
 
 
 const fetchCoordsByIP = function(ip, cb) {
-  const url = `https://ipwho.is/json/0.6.1.44`;
+  const url = `https://ipwho.is/`;
 
   request(url, (err, response, body) => {
     if (err) {
@@ -57,8 +57,8 @@ const fetchCoordsByIP = function(ip, cb) {
       cb(new Error(msg), null);
       return;
     }
-
-    console.log(body);
+    // console.log("Response >>>>",response);
+    // console.log("Body >>>>",body);
 
     try {
       const data = JSON.parse(body);
