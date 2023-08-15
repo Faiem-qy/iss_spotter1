@@ -21,8 +21,11 @@ const fetchMyIP = function(callback) {
       return;
     }
 
+  
     if (response.statusCode !== 200) {
-      callback(`Request failed with status code ${response.statusCode}`, null);
+      const msg = `Status Code ${respose.statusCode} when fetching IP. Response: ${body}`;
+      callback(Error(msg), null);
+      // callback(`Request failed with status code ${response.statusCode}`, null);
       return;
     }
     try {
@@ -36,4 +39,10 @@ const fetchMyIP = function(callback) {
   });
 };
 
-module.exports = { fetchMyIP };
+
+
+const fetchCoordsByIP = function (str, cb){
+
+} 
+
+module.exports = { fetchMyIP, fetchCoordsByIP };
