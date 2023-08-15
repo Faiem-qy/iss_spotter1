@@ -12,18 +12,20 @@ const request = require('request');
 
 const fetchMyIP = function(callback) {
   // use request to fetch IP address from JSON API
-  const url = `https://api.ipify.org?format=jsonp&callback=getip`;
+  // const url = `https://api.ipify.org?format=jsonp&callback=getip`;
+  const url = `https://api.ipify.org?format=json`;
+
 
 
   request(url, (err, response, body) => {
     if (err) {
-      callback(error, null);
+      callback(err, null);
       return;
     }
 
-  
+
     if (response.statusCode !== 200) {
-      const msg = `Status Code ${respose.statusCode} when fetching IP. Response: ${body}`;
+      const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
       callback(Error(msg), null);
       // callback(`Request failed with status code ${response.statusCode}`, null);
       return;
@@ -41,8 +43,31 @@ const fetchMyIP = function(callback) {
 
 
 
-const fetchCoordsByIP = function (str, cb){
+const fetchCoordsByIP = function(ip, cb) {
+  const url = `https://ipwho.is/json/0.6.1.44`;
 
-} 
+  request(url, (err, response, body) => {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching geolocation. Response: ${body}`;
+      cb(new Error(msg), null);
+      return;
+    }
+
+    console.log(body);
+
+    try {
+      const data = JSON.parse(body);
+      const { latitude, longitude } = data;
+      cb(null, { latitude, longitude });
+    } catch (parseError) {
+      cb(parseError, null);
+    }
+  });
+};
 
 module.exports = { fetchMyIP, fetchCoordsByIP };
