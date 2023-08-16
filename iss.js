@@ -43,30 +43,25 @@ const fetchMyIP = function(callback) {
 
 
 
-const fetchCoordsByIP = function(ip, cb) {
-  const url = `https://ipwho.is/`;
+const fetchCoordsByIP = function(ip, callback) {
+  request(`http://ipwho.is/${ip}`, (error, response, body) => {
 
-  request(url, (err, response, body) => {
-    if (err) {
-      cb(err, null);
+    if (error) {
+      callback(error, null);
       return;
     }
 
-    if (response.statusCode !== 200) {
-      const msg = `Status Code ${response.statusCode} when fetching geolocation. Response: ${body}`;
-      cb(new Error(msg), null);
-      return;
-    }
-    // console.log("Response >>>>",response);
-    // console.log("Body >>>>",body);
+    const parsedBody = JSON.parse(body);
 
-    try {
-      const data = JSON.parse(body);
-      const { latitude, longitude } = data;
-      cb(null, { latitude, longitude });
-    } catch (parseError) {
-      cb(parseError, null);
-    }
+    if (!parsedBody.success) {
+      const message = `Success status was ${parsedBody.success}. Server message says: ${parsedBody.message} when fetching for IP ${parsedBody.ip}`;
+      callback(Error(message), null);
+      return;
+    } 
+
+    const { latitude, longitude } = parsedBody;
+
+    callback(null, {latitude, longitude});
   });
 };
 
